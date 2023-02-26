@@ -11,6 +11,71 @@ body {
     background: #1B1B1B;    /* Lr = 12 */
 }
 
+h1 {
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.h1_sub {
+    font-size: 1.5em;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.div_main {
+    display: flex;
+    flex-direction: column;     /* 垂直排列 */
+    align-items: flex-start;    /* 容器内元素对齐到容器的顶部 */
+    padding: 56px 64px;
+    gap: 56px;                  /* 元素间距 */
+    width: 1280px;
+    flex: none;                 /* 不随容器的尺寸变化而拉伸缩小 */
+    align-self: stretch;        /*  */
+    flex-grow: 0;               /* 不会随着剩余空间的增加而放大。 */
+}
+
+.div_1 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 8px;
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+.div_2 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 16px;
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+.div_4 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 32px;
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+
+
+
+
 .div_sur, .div_hor, .div_ver, .div_dot, .div_input {
     position: absolute;
     border: 2px solid;
@@ -68,15 +133,33 @@ body {
     background-color:transparent;   /* 背景透明 */
 }
 
+a {
+    color: #60A6D6;
+}
+a:visited {
+    color: #869BDD;
+}
+
+.txt_nor {
+    font-family: Sarasa Gothic SC, PingFang SC, Microsoft YaHei;
+    color: #DDD;                /* Lr = 88*/
+}
+
+.txt_b {
+    font-family: Sarasa Gothic SC, PingFang SC, Microsoft YaHei;
+    font-weight: 700;
+    color: #DDD;                /* Lr = 88*/
+}
+
 .txt_input {
-    font-family: 'Consolas';
+    font-family: Sarasa Mono SC, Consolas, PingFang SC, Microsoft YaHei;
     font-style: normal;
     font-weight: 700;
     font-size: 24px;
     line-height: 100%;
     display: flex;
     text-align: center;
-    color: #DDD;                /* Lr = 88*/
+    color: #DDD;
     flex: none;
 }
 

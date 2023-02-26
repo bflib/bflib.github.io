@@ -66,9 +66,10 @@ draw_h_cex();
 draw_h_cmax();
 draw_c();
 
-
 select();
+
 function select() {
+    // 所选颜色
     let color = d3rgb( oklrch_to_srgb( [input_lightness.value/100, input_chroma.value/100, input_hue.value * Math.PI/180]) );
     //let select = document.getElementById("select");
     //select.style.background = color;
@@ -76,16 +77,16 @@ function select() {
     d3.select("#input_hex").property("value", color.formatHex().slice(1).toUpperCase()); // 去掉#号,转为大写
     if (color.displayable()) {
         d3.select("#input_hex").style("color", "#DDD");
-    } else {
+    } else {        // 超出sRGB色域
         d3.select("#input_hex").style("color", "#777");
     }
+    // 色板坐标
     g_hl.attr("transform", `translate(${input_hue.value}, ${(gamut_hl.height - input_lightness.value*2.4)})`);
     g_hl_cex.attr("transform", `translate(${input_hue.value}, ${(gamut_hl_cex.height - input_lightness.value*2.4)})`);
     g_lc.attr("transform", `translate(${input_lightness.value*3.6}, ${(gamut_lc.height - input_chroma.value*240/33)})`);
     g_hc.attr("transform", `translate(${input_hue.value}, ${(gamut_hc.height - input_chroma.value*240/33)})`);
     g_hc_cex.attr("transform", `translate(${input_hue.value}, ${(gamut_hc_cex.height - input_chroma.value*240/33)})`);
 }
-
 
 //=====================================  =====================================//
 //                              事件 - 修改 色值                              //
@@ -125,7 +126,7 @@ d3.selectAll(".div_input").on("mousedown", function(){  // 在input里可选
     });
 });
 
-svg_hl.on("mousedown", move_g_hl);
+svg_hl.on("click", move_g_hl);
 svg_hl.on("mousedown", function(){
     svg_hl.on("mousemove", move_g_hl);
     d3.select(document).on("mouseup", function(){   // 即使鼠标在svg外也能关闭
@@ -138,8 +139,7 @@ function move_g_hl(event) {
     input_lightness.value = parseInt( (240 - y)/2.4 );
 
     select();
-    draw_ab();  draw_hc();      draw_hc_cex();
-    draw_lc();
+    draw_ab();  draw_hc();      draw_hc_cex();  draw_lc();
     draw_h();   draw_h_cex();   draw_h_cmax();  draw_c();
     draw_l();   draw_l_copy();
 }

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="..\js\color_conversion.js"></script>
+</head>
+<body>
+    <canvas id="gamut_ab"
+            width="330"
+            height="330"
+            style="border:1px solid black; border-radius: 180px;">
+    </canvas>
+    <canvas id="gamut_2"
+    width="165"
+    height="165"
+    style="border:1px solid black; border-radius: 180px;">
+</canvas>
+    <hr />
+    L: <input id="input_lightness" type="number" value="65" /><br />
+    <hr />
+</body>
+
+<script>
+
+let ab_max="0.33";
+
+let gamut_ab = d3.select("#gamut_ab").node();
+let ctx_ab = gamut_ab.getContext("2d");
+
+draw_palette_ab();     // 初始化色板
+
+
+// 监听 lightness 修改值
+input_lightness.addEventListener("change", function() {
+    ctx_ab.clearRect(0, 0, gamut_ab.width, gamut_ab.height);
+    draw_palette_ab();
+});
+
+
+//=====================================  =====================================//
+function draw_palette_ab() {
+    for (let i = 0; i < gamut_ab.width; i++) {     // 遍历每个点的a和b的值
+        for (let j = 0; j < gamut_ab.height; j++) {
+            let { color } = pixel_ab(i, j);    // 使用pixel函数计算出每个点的颜色值
+            ctx_ab.fillStyle = color;
+            ctx_ab.globalAlpha = color.displayable() ? 1 : 0.3; // 判断是否属于sRGB，溢出sRGB时透明度设置为0.5
+            ctx_ab.fillRect(i, j, 1, 1);                    // 对应坐标 绘制矩形 1×1
+        }
+    }
+}
+function pixel_ab(i, j) {                             // 输入像素坐标
+    let A = d3.scaleLinear([0, gamut_ab.width], [-ab_max, ab_max]);  // 横坐标转换为a的坐标
+    let B = d3.scaleLinear([0, gamut_ab.height], [ab_max, -ab_max]);  // b (反转坐标正方向)
+    let a = A(i);
+    let b = B(j);
+    let color = d3rgb( oklab_to_srgb( toe_ive( [input_lightness.value/100, a, b]) ) );  // 转换为sRGB格式
+    return { a, b, color };
+}
+
+// sRGB的数组转换格式
+function d3rgb(arr) {
+    return d3.rgb(arr[0] * 255, arr[1] * 255, arr[2] * 255);
+}
+
+</script>
+
+</html>

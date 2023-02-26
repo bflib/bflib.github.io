@@ -6,8 +6,6 @@
     <title>COLOR PICKER</title>
 </head>
 <body>
-
-    <h1 style="color: #DDD;">COLOR PICKER ( OKL<sub>r</sub>CH : sRBG )</h1>
     <div style="position: relative;">
 
         <!-- colorvalue -->
@@ -19,7 +17,7 @@
                 height: 132px;
                 left: 16px;
                 top: 16px;
-                background: #A94EA3;
+                background: #B94972;
                 border-radius: 4px;">
             </div>
 
@@ -29,7 +27,7 @@
                 height: 56px;
                 left: 16px;
                 top: 168px;">
-                <input class="input_ib txt_input" type="text" value="A94EA3" style="left: 0px;"></input>
+                <input id="input_hex" class="input_ib txt_input" type="text" value="B94972" style="left: 0px;"></input>
             </div>
 
             <!-- H -->
@@ -50,7 +48,7 @@
                 left: 168px;
                 top: 92px;">
                 <label class="input_ih txt_input">C</label>
-                <input id="input_chroma" class="input_ib txt_input" type="number" value="0"></input>
+                <input id="input_chroma" class="input_ib txt_input" type="number" value="15"></input>
             </div>
 
             <!-- L -->
@@ -60,7 +58,7 @@
                 left: 168px;
                 top: 168px;">
                 <label class="input_ih txt_input">L</label>
-                <input id="input_lightness" class="input_ib txt_input" type="number" value="0"></input>
+                <input id="input_lightness" class="input_ib txt_input" type="number" value="100"></input>
             </div>
         </div>
 
@@ -73,6 +71,17 @@
             <canvas id="gamut_hl" class="gamut_cav" width="360px" height="240px"></canvas>
             <svg id="svg_hl" class="gamut_svg" width="360" height="240">
                 <g id="g_hl">
+                    <circle cx="0" cy="0" r="6" fill="none" stroke-width="1.25" stroke="#000000"/>
+                    <circle cx="0" cy="0" r="5" fill="none" stroke-width="1.00" stroke="#FFFFFF"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- gamut_hl_cex -->
+        <div class="div_sur" style="left: 842px; top: 2px;">
+            <canvas id="gamut_hl_cex" class="gamut_cav" width="360px" height="240px"></canvas>
+            <svg id="svg_hl_cex" class="gamut_svg" width="360" height="240">
+                <g id="g_hl_cex">
                     <circle cx="0" cy="0" r="6" fill="none" stroke-width="1.25" stroke="#000000"/>
                     <circle cx="0" cy="0" r="5" fill="none" stroke-width="1.00" stroke="#FFFFFF"/>
                 </g>
@@ -121,6 +130,17 @@
             </svg>
         </div>
 
+        <!-- gamut_hc_cex -->
+        <div class="div_sur" style="left: 842px; top: 330px;">
+            <canvas id="gamut_hc_cex" width="360px" height="240px"></canvas>
+            <svg id="svg_hc_cex" class="gamut_svg" width="360" height="240">
+                <g id="g_hc_cex">
+                    <circle cx="0" cy="0" r="6" fill="none" stroke-width="1.25" stroke="#000000"/>
+                    <circle cx="0" cy="0" r="5" fill="none" stroke-width="1.00" stroke="#FFFFFF"/>
+                </g>
+            </svg>
+        </div>
+
         <!-- gamut_l_c0 -->
         <div class="div_hor" style="left: 2px; top: 604px;">
             <canvas id="gamut_l_c0" width="360px" height="24px"></canvas>
@@ -136,10 +156,10 @@
         </div>
 
         <!-- gamut_ab -->
-        <div class="div_sur" style="left: 842px; top: 330px; border:none">
+        <div class="div_sur" style="left: 2px; top: 658px; border:none">
             <canvas id="gamut_ab"
-                width="480"
-                height="480"
+                width="240"
+                height="240"
                 style="border:2px solid #777; border-radius: 240px;">
             </canvas>
         </div>

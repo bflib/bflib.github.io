@@ -1,0 +1,92 @@
+body,h1,h2,h3,p,ul,ol,li,figure,figcaption,blockquote,dl,dd,pre,input,button,fieldset {
+    padding: 0;
+    margin: 0
+}
+
+html {
+    height: 100%
+}
+
+body {
+    background: #1B1B1B;    /* Lr = 12 */
+}
+
+.div_sur, .div_hor, .div_ver, .div_dot, .div_input {
+    position: absolute;
+    border: 2px solid;
+    border-radius: 4px;
+    border-color: #777;
+}
+
+.div_sur { /* 平面 */
+    width: 360px;
+    height: 240px;
+}
+.div_hor {  /* 水平 */
+    width: 360px;
+    height: 24px;
+}
+.div_ver {  /* 垂直 */
+    width: 24px;
+    height: 240px;
+}
+
+.div_dot {  /* 点 */
+    width: 24px;
+    height: 24px;
+}
+
+.div_input {
+    display: flex;              /* 弹性布局(水平横排) */
+    background: #373737;      /* Lr = 24 */
+    border: none;
+}
+
+.input_ih {
+    display: flex;             
+    justify-content: center;    /* 横向居中对齐元素 */
+    align-items: center;        /* 纵向居中对齐元素 */
+
+    padding: 0px;
+
+    width: 44px;
+    height: 56px;
+}
+
+.input_ib {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 0px;
+
+    width: 132px;
+    height: 56px;
+
+    border: 0;                      /* 边框0 */
+    outline: 0;                     /* 选中边框 */
+    background-color:transparent;   /* 背景透明 */
+}
+
+.txt_input {
+    font-family: 'Sarasa Mono SC';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 100%;
+    display: flex;
+    text-align: center;
+    color: #DDD;                /* Lr = 88*/
+    flex: none;
+}
+
+/*
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+}   */  /* 去除input后部的样式 */
+
+.gamut_cav, .gamut_svg {    /* 色板 与 所选颜色定位 */
+    position: absolute; /* 相对于其最近的已定位祖先元素进行定位 */
+    top: 0;
+    left: 0;
+}

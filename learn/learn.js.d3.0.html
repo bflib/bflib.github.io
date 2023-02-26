@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    
+</body>
+
+<script src="..\js\d3.js"></script>
+
+<script>
+
+var v_1 = 10;
+var v_2 = `abc${a}`;    // v_2 = 'abc10'
+
+var v_3 = [1,2,3];                      // 数组
+var v_4 = {name:'tadokoro', age:'24'};  // 对象
+var v_5 = [ {name:'name_1', age:'20'},
+            {name:'name_2', age:'40'}, ]  // 对象数组
+
+// 字符串转数值 +'3.14'
+
+// 选择器:  d3.select(...); d3.selectAll(...)
+d3.select('#id_1');         // 选择第一个满足条件的元素
+d3.selectAll('.class_1');   // 选择所有的满足条件的元素
+d3.selectAll('.class_1 text');   // 选择所有 class_1类的 text
+
+// 设置元素属性:  元素.attr('属性', '值')
+d3.select('#id_1').attr('x', '100');
+// 读取元素属性:  元素.attr('属性')
+d3.select('#id_1').attr('x');
+// 链式调用
+selection.attr('x').attr('').attr('');
+
+// 添加元素:  元素.append(...)
+var rect_1 = svg.append('rect');
+var rect_1 = d3.select('#svg_1').append('rect').attr('x', '100')
+// 链式添加
+// 移除整个标签:  元素.remove()
+
+
+// csv 数据
+
+// 文件内
+// a,b
+// 1,2
+// 3,4
+
+// 读取后
+// array(2)  0:  {a: '1', b: '2'}
+//           1:  {a: '3', b: '4'}
+
+// d3.csv('路径')  // 读取csv文件
+// d3.csv('路径').then(data => { 数据读取后的代码逻辑 })
+    // d3.csv('路径')是异步函数, 不可直接获得返回值
+    // 返回一个js的promise(询问)对象, 询问读取之后做什么
+    // '做什么' 即 then()函数的内容
+
+// d3.max(数组); // 返回数组最大值
+// d3.min(数组); // 返回数组最小值
+// d3.extent(数组); // 返回一个数组 [最小值, 最大值]
+
+let array_1 = [ { name: 'name1', age: '20' }, 
+                { name: 'name2', age: '40' }, ]
+d3.max(array_1, d => d.age); // 40 
+
+// 比例尺函数
+// let f = d3.scaleLinear([0, 500], [0, 100]);
+// let f = d3.scaleLinear().domain([0,500]).range([0,100]);
+    // 调用  f(0) = 0.  f(250) = 50
+
+// d3.scaleBand()   // ‘条带’比例尺函数 (离散空间数据)
+// let f = d3.scaleBand().domain(['a', 'b', 'c']).range([0, 4]);
+    // 调用  f('a') = 0.  f('c') = 3
+
+    // array_1.map(d=d.name) // ['name1', 'name2']
+
+    // scale.padding(0.1)  // 设置条带的间距占各自区域的比重。
+
+
+</script>
+
+</html>

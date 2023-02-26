@@ -1,0 +1,69 @@
+/*
+    选择器      选择的内容          示例
+
+    *           全选
+    标签        <标签>              p 选择 <p>
+    #A          id="A"的元素        #my-id 选择 <p id="my-id"> 或 <a id="my-id">
+    .A          class="A"的元素     .my-class 同时选择 <p class="my-class"> 和 <a class="my-class">
+
+    [A]         属性有A=""的元素    img[src] 选择 <img src="myimage.png"> 而不是 <img>
+    [A=值]      属性有A="值"的元素
+    [A~=B]      属性有A="文本" 且 文本包含 单词B 的元素
+    [A|=B]      属性有A="文本" 且 文本以 B 开头
+
+    A, B        A 和 B
+    A B         B (B在A之内)
+    A > B       B (B是A下的第一级子元素)
+    A + B       B (B紧跟在A之后)(相邻选择符)
+
+    A:状态(伪类Pseudo)  状态生效时 选择A
+
+        a:link          链接 未访问
+        a:visited       链接 已访问
+        a:hover         链接 悬停           a:hover 鼠标指针悬停在<a>上时选择 <a>
+        a:active        链接 点击(必须放在悬停之后)
+
+        input:focus     输入 焦点
+
+        p:first-letter  段落 第一个字母
+        p:first-line    段落 第一行
+        p:first-child   段落 第一级子级
+
+    注意:   不同样式同时选中并且样式冲突时，
+            后者 覆盖 前者，类选择器 覆盖 元素选择器
+*/
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0.0rem 0;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+h3 {
+    font-size: 1.17rem;
+}
+
+h4 {
+    font-size: 1rem;
+}
+
+h5 {
+    font-size: 0.83rem;
+}
+
+h6 {
+    font-size: 0.67rem;
+}
+
+/*  清除自带的样式(有的不支持) 这里清除了列表每行的项目符号
+li {
+    list-style-type: none;
+}
+*/
+

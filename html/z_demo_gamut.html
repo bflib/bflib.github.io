@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="..\js\color_conversion.js"></script>
+</head>
+<body>
+    <canvas id="gamut_ab"
+            width="162"
+            height="162"
+            style="border:1px solid black; border-radius: 180px;">
+    </canvas>
+    <hr />
+    L: <input id="input_lightness" type="number" value="65" /><br />
+    <hr />
+    <canvas id="gamut_hc"
+            width="509"
+            height="81"
+            style="border:1px solid black;">
+    </canvas>
+    <hr />
+    C: <input id="input_chrome" type="number" value="15" /><br />
+    <hr />
+    <canvas id="gamut_hl"
+            width="509"
+            height="509"
+            style="border:1px solid black;">
+    </canvas>
+    <hr />
+    H: <input id="input_hue" type="number" value="180" /><br />
+    <hr />
+    <canvas id="gamut_lc"
+            width="509"
+            height="81"
+            style="border:1px solid black;">
+    </canvas>
+</body>
+
+<script>
+
+let ab_max="0.324";
+
+let gamut_ab = d3.select("#gamut_ab").node();
+let ctx_ab = gamut_ab.getContext("2d");
+let gamut_hc = d3.select("#gamut_hc").node();
+let ctx_hc = gamut_hc.getContext("2d");
+let gamut_hl = d3.select("#gamut_hl").node();
+let ctx_hl = gamut_hl.getContext("2d");
+let gamut_lc = d3.select("#gamut_lc").node();
+let ctx_lc = gamut_lc.getContext("2d");
+
+draw_palette_ab();     // 初始化色板
+draw_palette_hc();
+draw_palette_hl();
+draw_palette_lc();
+
+// 监听 lightness 修改值
+input_lightness.addEventListener("change", function() {
+    ctx_ab.clearRect(0, 0, gamut_ab.width, gamut_ab.height);
+    draw_palette_ab();
+    ctx_hc.clearRect(0, 0, gamut_hc.width, gamut_hc.height);
+    draw_palette_hc();
+});
+// 监听 chrom 修改值
+input_chrome.addEventListener("change", function() {
+  ctx_hl.clearRect(0, 0, gamut_hl.width, gamut_hl.height);
+    draw_palette_hl();
+});
+// 监听 hue 修改值
+input_hue.addEventListener("change", function() {
+  ctx_lc.clearRect(0, 0, gamut_lc.width, gamut_lc.height);
+    draw_palette_lc();
+});
+
+
+//=====================================  =====================================//
+function draw_palette_ab() {
+    for (let i = 0; i < gamut_ab.width; i++) {     // 遍历每个点的a和b的值
+        for (let j = 0; j < gamut_ab.height; j++) {
+            let { color } = pixel_ab(i, j);    // 使用pixel函数计算出每个点的颜色值
+            ctx_ab.fillStyle = color;
+            ctx_ab.globalAlpha = color.displayable() ? 1 : 0.3; // 判断是否属于sRGB，溢出sRGB时透明度设置为0.5
+            ctx_ab.fillRect(i, j, 1, 1);                    // 对应坐标 绘制矩形 1×1
+        }
+    }
+}
+function pixel_ab(i, j) {                             // 输入像素坐标
+    let A = d3.scaleLinear([0, gamut_ab.width], [-ab_max, ab_max]);  // 横坐标转换为a的坐标
+    let B = d3.scaleLinear([0, gamut_ab.height], [ab_max, -ab_max]);  // b (反转坐标正方向)
+    let a = A(i);
+    let b = B(j);
+    let color = d3rgb( oklab_to_srgb( toe_ive( [input_lightness.value/100, a, b]) ) );  // 转换为sRGB格式
+    return { a, b, color };
+}
+//=====================================  =====================================//
+function draw_palette_hc() {
+    for (let i = 0; i < gamut_hc.width; i++) {
+        for (let j = 0; j < gamut_hc.height; j++) {
+            let { color } = pixel_hc(i, j);
+            ctx_hc.fillStyle = color;
+            ctx_hc.globalAlpha = color.displayable() ? 1 : 0.3;
+            ctx_hc.fillRect(i, j, 1, 1);
+        }
+    }
+}
+function pixel_hc(i, j) {
+    let H = d3.scaleLinear([0, gamut_hc.width], [0, 2 * Math.PI]);
+    let C = d3.scaleLinear([0, gamut_hc.height], [ab_max, 0]);
+    let h = H(i);
+    let c = C(j);
+    let color = d3rgb( oklrch_to_srgb( [input_lightness.value/100, c, h]) );
+    return { h, c, color };
+}
+//=====================================  =====================================//
+function draw_palette_hl() {
+    for (let i = 0; i < gamut_hl.width; i++) {
+        for (let j = 0; j < gamut_hl.height; j++) {
+            let { color } = pixel_hl(i, j);
+            ctx_hl.fillStyle = color;
+            ctx_hl.globalAlpha = color.displayable() ? 1 : 0.3;
+            ctx_hl.fillRect(i, j, 1, 1);
+        }
+    }
+}
+function pixel_hl(i, j) {
+    let H = d3.scaleLinear([0, gamut_hl.width], [0, 2 * Math.PI]);
+    let L = d3.scaleLinear([0, gamut_hl.height], [1, 0]);
+    let h = H(i);
+    let l = L(j);
+    let color = d3rgb( oklrch_to_srgb( [l, input_chrome.value/1000, h]) );
+    return { h, l, color };
+}
+//=====================================  =====================================//
+function draw_palette_lc() {
+    for (let i = 0; i < gamut_lc.width; i++) {
+        for (let j = 0; j < gamut_lc.height; j++) {
+            let { color } = pixel_lc(i, j);
+            ctx_lc.fillStyle = color;
+            ctx_lc.globalAlpha = color.displayable() ? 1 : 0.3;
+            ctx_lc.fillRect(i, j, 1, 1);
+        }
+    }
+}
+function pixel_lc(i, j) {
+    let L = d3.scaleLinear([0, gamut_lc.width], [0, 1]);
+    let C = d3.scaleLinear([0, gamut_lc.height], [ab_max, 0]);
+    let l = L(i);
+    let c = C(j);
+    let color = d3rgb( oklrch_to_srgb( [l, c, input_hue.value * Math.PI/180]) );
+    return { l, c, color };
+}
+
+// sRGB的数组转换格式
+function d3rgb(arr) {
+    return d3.rgb(arr[0] * 255, arr[1] * 255, arr[2] * 255);
+}
+
+</script>
+
+</html>

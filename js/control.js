@@ -2,12 +2,10 @@
 let displayable_color_alpha = "0.2";
 
 // 绘图精度
-let r = "15";
+let r = "12";
 
 // 色度上限。实际 ab最大值 测试约小于0.323
 let ab_max = "0.33";
-
-
 
 let gamut_ab = d3.select("#gamut_ab").node();
 let ctx_ab = gamut_ab.getContext("2d");
@@ -33,6 +31,8 @@ let gamut_h = d3.select("#gamut_h").node();
 let ctx_h = gamut_h.getContext("2d");
 let gamut_h_cex = d3.select("#gamut_h_cex").node();
 let ctx_h_cex = gamut_h_cex.getContext("2d");
+let gamut_h_cmax = d3.select("#gamut_h_cmax").node();
+let ctx_h_cmax = gamut_h_cmax.getContext("2d");
 
 let gamut_c = d3.select("#gamut_c").node();
 let ctx_c = gamut_c.getContext("2d");
@@ -40,12 +40,16 @@ let ctx_c = gamut_c.getContext("2d");
 let gamut_c0 = d3.select("#gamut_c0").node();
 let ctx_c0 = gamut_c0.getContext("2d");
 
-let svg_hl = document.getElementById("svg_hl");
-let g_hl = document.getElementById("g_hl");
-g_hl.setAttribute("transform", "translate(330, 120)");  // 初始位置
-let svg_lc = document.getElementById("svg_lc");
-let g_lc = document.getElementById("g_lc");
-g_lc.setAttribute("transform", "translate(120, 16/33)");  // 初始位置
+let svg_hl = d3.select("#svg_hl");
+let g_hl = d3.select("#g_hl");
+let svg_hl_cex = d3.select("#svg_hl_cex");
+let g_hl_cex = d3.select("#g_hl_cex");
+let svg_lc = d3.select("#svg_lc");
+let g_lc = d3.select("#g_lc");
+let svg_hc = d3.select("#svg_hc");
+let g_hc = d3.select("#g_hc");
+let svg_hc_cex = d3.select("#svg_hc_cex");
+let g_hc_cex = d3.select("#g_hc_cex");
 
 draw_ab();     // 初始化色板
 draw_hc();
@@ -58,10 +62,10 @@ draw_l();
 draw_l_copy();
 draw_l_c0();
 draw_h();
+draw_h_cex();
+draw_h_cmax();
 draw_c();
 
-draw_l_c0();
-draw_h_cex();
 
 select();
 function select() {
@@ -75,6 +79,11 @@ function select() {
     } else {
         d3.select("#input_hex").style("color", "#777");
     }
+    g_hl.attr("transform", `translate(${input_hue.value}, ${(gamut_hl.height - input_lightness.value*2.4)})`);
+    g_hl_cex.attr("transform", `translate(${input_hue.value}, ${(gamut_hl_cex.height - input_lightness.value*2.4)})`);
+    g_lc.attr("transform", `translate(${input_lightness.value*3.6}, ${(gamut_lc.height - input_chroma.value*240/33)})`);
+    g_hc.attr("transform", `translate(${input_hue.value}, ${(gamut_hc.height - input_chroma.value*240/33)})`);
+    g_hc_cex.attr("transform", `translate(${input_hue.value}, ${(gamut_hc_cex.height - input_chroma.value*240/33)})`);
 }
 
 
@@ -85,49 +94,59 @@ function select() {
 input_lightness.addEventListener("change", event_change_lightness);
 function event_change_lightness() {
     select();
-    draw_ab(); draw_hc();
-    draw_h(); draw_h_cex(); draw_c();
+    draw_ab();  draw_hc();      draw_hc_cex();
+    draw_h();   draw_h_cex();   draw_h_cmax();  draw_c();
 }
 
 // 修改 色度(chrom) 
 input_chroma.addEventListener("change", event_change_chroma);
 function event_change_chroma() {
-    select.style.background = d3rgb( oklrch_to_srgb( [input_lightness.value/100, input_chroma.value/100, input_hue.value * Math.PI/180]) );
-    draw_hl();
-    draw_l(); draw_l_copy(); draw_h();
+    select();
+    draw_hl();  draw_hl_cex();
+    draw_l();   draw_l_copy();  draw_h();
 }
 
 // 修改 色相(hue) 
 input_hue.addEventListener("change", event_change_hue);
 function event_change_hue() {
-    select.style.background = d3rgb( oklrch_to_srgb( [input_lightness.value/100, input_chroma.value/100, input_hue.value * Math.PI/180]) );
+    select();
     draw_lc();
-    draw_l();
-    draw_l_copy();
-    draw_c();
+    draw_l();   draw_l_copy(); draw_c();
 }
 
 //=====================================  =====================================//
 //                              事件 - 点击 色板                              //
 //=====================================  =====================================//
-svg_hl.addEventListener("click", move_g_hl);
+svg_hl.on("mousedown", function(){ move_g_hl;
+    svg_hl.on("mousemove", move_g_hl);
+    d3.select("body").style("user-select", "none"); // 禁止用户选择文本
+    d3.select(document).on("mouseup", function(){   // 即使在svg外也能触发
+        d3.select("body").style("user-select", null);
+        svg_hl.on("mousemove", null);
+    });
+});
 function move_g_hl(event) {
-    let x = event.offsetX;
-    let y = event.offsetY;
-    g_hl.setAttribute("transform", `translate(${x}, ${y})`);
-
+    let [x, y] = d3.pointer(event);
     input_hue.value = x;
     input_lightness.value = parseInt( (240 - y)/2.4 );
 
-    select.style.background = d3rgb( oklrch_to_srgb( [input_lightness.value/100, input_chroma.value/100, input_hue.value * Math.PI/180]) );
-    draw_ab();
-    draw_hc();
+    select();
+    draw_ab();  draw_hc();      draw_hc_cex();
     draw_lc();
-    draw_l();
-    draw_l_copy();
-    draw_h();
-    draw_h_cex()
-    draw_c();
+    draw_h();   draw_h_cex();   draw_h_cmax();  draw_c();
+    draw_l();   draw_l_copy();
+}
+svg_hl_cex.on("click", move_g_hl_cex);
+function move_g_hl_cex(event) {
+    let [x, y] = d3.pointer(event);
+    input_hue.value = x;
+    input_lightness.value = parseInt( (240 - y)/2.4 );
+
+    select();
+    draw_ab();  draw_hc();      draw_hc_cex();
+    draw_lc();
+    draw_h();   draw_h_cex();   draw_h_cmax();  draw_c();
+    draw_l();   draw_l_copy();
 }
 
 //=====================================  =====================================//
@@ -314,18 +333,35 @@ function pixel_h(i) {
 function draw_h_cex() {
     ctx_h_cex.clearRect(0, 0, gamut_h_cex.width, gamut_h_cex.height);
     for (let k = 0; k <= 33; k++) {
-        for (let m = 2; m <= input_lightness.value; m++) {  // 下限为1或0有bug
-            for (let i = 0; i < gamut_h_cex.width/r; i++) {
-                let { color } = pixel_h_cex(i*r, m, k);
-                ctx_h_cex.fillStyle = color;
-                ctx_h_cex.globalAlpha = color.displayable() ? 1 : 0;
-                ctx_h_cex.fillRect(i*r, 0, r, gamut_h_cex.height);
-            }
+        for (let i = 0; i < gamut_h_cex.width/r; i++) {
+            let { color } = pixel_h_cex(i*r, input_lightness.value, k);
+            ctx_h_cex.fillStyle = color;
+            ctx_h_cex.globalAlpha = color.displayable() ? 1 : 0;
+            ctx_h_cex.fillRect(i*r, 0, r, gamut_h_cex.height);
         }
     }
 }
 function pixel_h_cex(i, m, k) {
     let H = d3.scaleLinear([0, gamut_h_cex.width], [0, 2 * Math.PI]);
+    let h = H(i);
+    let color = d3rgb( oklrch_to_srgb( [m/100, k/100, h]) );
+    return { h, color };
+}
+function draw_h_cmax() {
+    ctx_h_cmax.clearRect(0, 0, gamut_h_cmax.width, gamut_h_cmax.height);
+    for (let k = 0; k <= 33; k++) {
+        for (let m = 2; m <= input_lightness.value; m++) {  // 下限m取1或0有bug
+            for (let i = 0; i < gamut_h_cmax.width/r; i++) {
+                let { color } = pixel_h_cmax(i*r, m, k);
+                ctx_h_cmax.fillStyle = color;
+                ctx_h_cmax.globalAlpha = color.displayable() ? 1 : 0;
+                ctx_h_cmax.fillRect(i*r, 0, r, gamut_h_cmax.height);
+            }
+        }
+    }
+}
+function pixel_h_cmax(i, m, k) {
+    let H = d3.scaleLinear([0, gamut_h_cmax.width], [0, 2 * Math.PI]);
     let h = H(i);
     let color = d3rgb( oklrch_to_srgb( [m/100, k/100, h]) );
     return { h, color };

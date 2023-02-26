@@ -2,8 +2,18 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href=".\img\favicon\tea.ico" />
     <link rel="stylesheet" type="text/css" href="..\css\css_1.css">
     <title>COLOR PICKER</title>
+    <!-- Version 3.1(23-2-26) -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RP9QD7YDZN"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-RP9QD7YDZN');
+    </script>
 </head>
 <body>
     <div style="position: relative;">
@@ -17,7 +27,7 @@
                 height: 132px;
                 left: 16px;
                 top: 16px;
-                background: #B94972;
+                background: #60A6D6;
                 border-radius: 4px;">
             </div>
 
@@ -27,7 +37,7 @@
                 height: 56px;
                 left: 16px;
                 top: 168px;">
-                <input id="input_hex" class="input_ib txt_input" type="text" value="B94972" style="left: 0px;"></input>
+                <input id="input_hex" class="input_ib txt_input" type="text" value="60A6D6" style="left: 0px;"></input>
             </div>
 
             <!-- H -->
@@ -37,7 +47,7 @@
                 left: 168px;
                 top: 16px;">
                 <label class="input_ih txt_input">H</label>
-                <input id="input_hue" class="input_ib txt_input" type="number" value="0">
+                <input id="input_hue" class="input_ib txt_input" type="number" value="240">
                 </input>
             </div>
 
@@ -48,7 +58,7 @@
                 left: 168px;
                 top: 92px;">
                 <label class="input_ih txt_input">C</label>
-                <input id="input_chroma" class="input_ib txt_input" type="number" value="15"></input>
+                <input id="input_chroma" class="input_ib txt_input" type="number" value="10"></input>
             </div>
 
             <!-- L -->
@@ -58,7 +68,7 @@
                 left: 168px;
                 top: 168px;">
                 <label class="input_ih txt_input">L</label>
-                <input id="input_lightness" class="input_ib txt_input" type="number" value="100"></input>
+                <input id="input_lightness" class="input_ib txt_input" type="number" value="65"></input>
             </div>
         </div>
 
@@ -153,6 +163,11 @@
         <!-- gamut_h_cex -->
         <div class="div_hor" style="left: 450px; top: 604px;">
             <canvas id="gamut_h_cex" width="360px" height="24px"></canvas>
+        </div>
+
+        <!-- gamut_h_cmax -->
+        <div class="div_hor" style="left: 842px; top: 604px;">
+            <canvas id="gamut_h_cmax" width="360px" height="24px"></canvas>
         </div>
 
         <!-- gamut_ab -->

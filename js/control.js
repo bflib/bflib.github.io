@@ -125,7 +125,8 @@ d3.selectAll(".div_input").on("mousedown", function(){  // 在input里可选
     });
 });
 
-svg_hl.on("mousedown", function(){ move_g_hl;
+svg_hl.on("mousedown", move_g_hl);
+svg_hl.on("mousedown", function(){
     svg_hl.on("mousemove", move_g_hl);
     d3.select(document).on("mouseup", function(){   // 即使鼠标在svg外也能关闭
         svg_hl.on("mousemove", null);

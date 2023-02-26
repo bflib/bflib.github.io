@@ -117,11 +117,17 @@ function event_change_hue() {
 //=====================================  =====================================//
 //                              事件 - 点击 色板                              //
 //=====================================  =====================================//
+d3.select("body").style("user-select", "none");         // 禁止选择文本
+d3.selectAll(".div_input").on("mousedown", function(){  // 在input里可选
+    d3.select("body").style("user-select", "auto");
+    d3.select(document).on("mouseup", function(){
+        d3.select("body").style("user-select", "none");
+    });
+});
+
 svg_hl.on("mousedown", function(){ move_g_hl;
     svg_hl.on("mousemove", move_g_hl);
-    d3.select("body").style("user-select", "none"); // 禁止用户选择文本
-    d3.select(document).on("mouseup", function(){   // 即使在svg外也能触发
-        d3.select("body").style("user-select", null);
+    d3.select(document).on("mouseup", function(){   // 即使鼠标在svg外也能关闭
         svg_hl.on("mousemove", null);
     });
 });

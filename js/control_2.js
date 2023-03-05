@@ -1,8 +1,44 @@
-// 色彩溢出部分的透明度
-let displayable_color_alpha = "0.2";
+// 数据精度
+let width  = 100;
+let height = 100;
+let depth  = 100;
+
+// 色彩溢出部分的透明度 [0, 255]
+let displayable_color_alpha = 128;
+
+// lch 色彩空间 数组 ( 横坐标 为 h, 纵坐标 为 c, 深度 为 l )
+let colorspace_lch = new Uint8ClampedArray(width*height*depth*4);
+let scale_h = d3.scaleLinear([0, width ], [0, 100]);
+let scale_c = d3.scaleLinear([0, height], [100, 0]);
+// lch 色彩空间 向 sRGB映射
+for (let l = 0; l < depth ; l++) {
+for (let c = 0; c < height; c++) {
+for (let h = 0; h < width ; h++) {
+        let index = (h + c*width + l*width*height) * 4;
+        let color = oklrch_to_srgb([l/depth, scale_c(c/3), scale_h(h)])
+        cs[index    ] = color[0]*255; // 红
+        cs[index + 1] = color[1]*255; // 绿
+        cs[index + 2] = color[2]*255; // 蓝
+        cs[index + 3] = d3rgb(color).displayable() ? 255 : displayable_color_alpha; // 不透明度
+}}}
+
+
+// 读取数据绘图
+let colorspace_hc = new Uint8ClampedArray(width*height*4);
+function draw_hc(l) {
+    for (let i = 0; i < width*height*4; i++){
+        colorspace_hc[i] = colorspace_lch[ l*width*height*4 + i ];
+    }
+}
+
+// 绘图
+
+
 
 // 绘图精度
-let r = "15";
+let r = "12";
+
+
 
 // 色度上限。实际 ab最大值 测试约小于0.323
 let ab_max = "0.33";

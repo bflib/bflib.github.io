@@ -10,9 +10,9 @@
     <canvas id="canvas_hl"></canvas>
     <canvas id="canvas_lc"></canvas>
     <hr />
-    L: <input id="input_l" type="number" value="65" step="1" /><br />
-    C: <input id="input_c" type="number" value="15" step="1" /><br />
-    H: <input id="input_h" type="number" value="15" step="1" /><br />
+    L: <input id="input_l" type="number" step="1" /><br />
+    C: <input id="input_c" type="number" step="1" /><br />
+    H: <input id="input_h" type="number" step="1" /><br />
 
 </body>
 
@@ -20,11 +20,23 @@
 
 // <input id="input_l" type="number" />要求有以下功能, Banker's Rounding
 
-// 数据精度
-let res_h = 256;   // h     数据范围: [0, res_h - 1]
-let res_c = 256;   // c
+// 绘图精度
 let res_l = 256;   // l
+let res_c = 256;   // c
+let res_h = 256;   // h     数据范围: [0, res_h - 1]
 let ab_max= .324;
+
+// 定义域
+let domain_l_max = 100;
+let domain_c_max = 100;
+let domain_h_max = 360;
+let scale_l_input = d3.scaleLinear([0, domain_l_max], [0, res_l-1]);
+let scale_c_input = d3.scaleLinear([0, domain_c_max], [res_c-1, 0]); // * 需要颠倒第二个轴的值
+let scale_h_input = d3.scaleLinear([0, domain_h_max], [0, res_h-1]);
+//默认值
+d3.select("#input_l").property("value", 0.5*domain_l_max);
+d3.select("#input_c").property("value", 0.5*domain_c_max);
+d3.select("#input_h").property("value", 0.5*domain_h_max);
 
 // 色彩溢出部分的透明度 [0, 255]
 let displayable_color_alpha = 85;
@@ -80,6 +92,7 @@ for (let h = 0; h < res_h; h++) {
 
 let colorspace_hc = new Uint8ClampedArray(res_h*res_c*4);
 function draw_hc(l) {
+    l = parseInt(scale_l_input(l));
     for (let c = 0; c < res_c; c++) {       // y 轴
     for (let h = 0; h < res_h; h++) {       // x 轴
     for (let i = 0; i < 4    ; i++) {       // 通道
@@ -93,7 +106,7 @@ draw_hc(parseInt(input_l.value));           // 初始化
 
 let colorspace_hl = new Uint8ClampedArray(res_h*res_l*4);
 function draw_hl(c) {
-
+    c = parseInt(scale_c_input(c));
     for (let l = 0; l < res_l; l++) {
     for (let h = 0; h < res_h; h++) {
     for (let i = 0; i < 4    ; i++) {
@@ -107,6 +120,7 @@ draw_hl(parseInt(input_c.value));
 
 let colorspace_lc = new Uint8ClampedArray(res_h*res_c*4);
 function draw_lc(h) {
+    h = parseInt(scale_h_input(h));
     for (let c = 0; c < res_c; c++) {
     for (let l = 0; l < res_l; l++) {
     for (let i = 0; i < 4    ; i++) {
@@ -127,14 +141,14 @@ input_l.addEventListener('change', function() {
     }
 );
 
-input_c.addEventListener('input', function() {
-    const value = parseInt(this.value);
-    if (isNaN(value) || value >= res_c || value < 0) {  // 非数字 最大值 最小值
-        this.value = '';
-    } else {
-        this.value = value;
-    }
-});
+// input_c.addEventListener('input', function() {
+//     const value = parseInt(this.value);
+//     if (isNaN(value) || value >= res_c || value < 0) {  // 非数字 最大值 最小值
+//         this.value = '';
+//     } else {
+//         this.value = value;
+//     }
+// });
 
 input_c.addEventListener('change', function() {
     const value = parseInt(this.value);
@@ -146,7 +160,9 @@ input_h.addEventListener('change', function() {
     draw_lc(value);
 });
 
-
+//=====================================  =====================================//
+//                                    测试                                    //
+//=====================================  =====================================//
 var myNumber = 42;
 var svg = d3.select("body").append("svg")
   .attr("width", 500)

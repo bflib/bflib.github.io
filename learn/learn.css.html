@@ -5,18 +5,21 @@
     <title>学习css</title>
     <link rel="icon" type="image/x-icon" href="..\image\favicon.ico" />
 
-    <!-- 引用外部样式 -->
-    <link rel="stylesheet" type="text/css" href="..\css\learn.css">
+    <!-- 引用外部样式 <link /> -->
+    <link rel="stylesheet" type="text/css" href="..\css\learn.css" />
 
     <style>
-            /*  内部样式表  */
+            /*  内部样式表
+                优先级:
+                内联样式 Inline style > 内部样式 Internal style sheet > 外部样式 External style sheet > 浏览器默认样式
+            */
     </style>
 
 </head>
 <body>
     
     <div>文本文本文本</div>
-    <!-- 内联样式 -->
+    <!-- 内联样式 style="" -->
     <div style="color: Silver; background-color: WhiteSmoke; border: 1px solid black;">文本文本文本</div>
 
     <!-- 颜色 -->
@@ -32,13 +35,28 @@
             全局值      background-color: inherit;
                         background-color: initial;
                         background-color: unset;
-     -->
+    -->
+
+    <!-- 盒子模型 Box Model -->
+    <!-- 内容 Content, Padding 内边距, Border 边框, Margin 外边距 -->
+    <style>
+        .box_0 {
+            background-color: lightgrey;
+            width: 720px;
+            border: 16px solid yellowgreen;
+            padding: 16px;
+            margin: auto;
+        }
+    </style>
+    <div class="box_0">宽(width): 720, 边框(border): 16, 内边距(Padding): 16, 外边距(margin): 16</div>
+    <!-- 浏览器的兼容性问题 https://www.runoob.com/css/css-boxmodel.html -->
+    <!-- 取值 : 固定值（单位px, em 等）/ 百分比 / [Margin:] auto（左右100%, 上下0%） -->
 
     <!-- calc() 简单的数学运算 -->
     <div class="outer_1"><div class="box_1">暗蓝色的宽度为 90% - 30px.</div></div>
     <style>
         .outer_1 {
-            border: 3px solid black;
+            border: 2px solid black;
             background-color: LightCyan;
         }
         .box_1 {
@@ -48,6 +66,35 @@
             background-color: DarkBlue;
         }
     </style>
+
+    <style>
+        div.box_static {
+            position: static;
+            padding: 4px;
+            border: 2px solid black;
+        }
+        div.box_fixed {
+            position: fixed;
+            padding: 4px;
+            border: 2px solid black;
+        }
+        div.box_relative {
+            position: relative;
+            left: 24px;
+            padding: 4px;
+            border: 2px solid black;
+        }
+        div.box_absolute {
+            position: absolute;
+            left: 24px;
+            padding: 4px;
+            border: 2px solid black;
+        }
+    </style>
+    <div class="box_static">默认静态 position: static;</div>
+    <div class="box_fixed">固定位置 position: fixed;（不随页面滚动，与文档流无关，不占据空间，和其他元素重叠）</div>
+    <div class="box_relative">相对定位 position: relative;（此处使用left右移24px）</div>
+    <div class="box_absolute">相对父级 position: absolute;（与文档流无关，不占据空间，和其他元素重叠）</div>
 
     <!-- transform() 转换 -->
     <!-- https://www.runoob.com/cssref/css3-pr-transform.html -->
@@ -73,5 +120,8 @@
         padding-bottom: 15px;
         padding-left: 5px;
      -->
+
+
+
 </body>
 </html>

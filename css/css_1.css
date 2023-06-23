@@ -141,18 +141,18 @@ a:visited {
 }
 
 .txt_nor {
-    font-family: Sarasa Gothic SC, PingFang SC, Microsoft YaHei;
+    font-family: Sarasa Gothic SC, sans-serif;
     color: #DDD;                /* Lr = 88*/
 }
 
 .txt_b {
-    font-family: Sarasa Gothic SC, PingFang SC, Microsoft YaHei;
+    font-family: Sarasa Gothic SC, sans-serif;
     font-weight: 700;
     color: #DDD;                /* Lr = 88*/
 }
 
 .txt_input {
-    font-family: Sarasa Mono SC, Consolas, PingFang SC, Microsoft YaHei;
+    font-family: Sarasa Mono SC, monospace;
     font-style: normal;
     font-weight: 700;
     font-size: 24px;

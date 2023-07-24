@@ -22,25 +22,31 @@
 
 // <input id="input_l" type="number" />要求有以下功能, Banker's Rounding
 
-// 绘图精度
+//=====================================  =====================================//
+//                                  环境设置                                  //
+//=====================================  =====================================//
+
+// 绘图精度(色彩空间坐标) (resolution)
 const res_l = 256;   // l
 const res_c = 256;   // c
 const res_h = 256;   // h     数据范围: [0, res_h - 1]
 const ab_max= .324;
 
-// 定义域
+// 输入值定义域 (domain)
 const domain_l_max = 100;
 const domain_c_max = 100;
 const domain_h_max = 360;
+
+// 输入值 --映射到-> 绘图坐标
 const scale_l_input = d3.scaleLinear([0, domain_l_max], [0, res_l-1]);
 const scale_c_input = d3.scaleLinear([0, domain_c_max], [0, res_c-1]); // * 需要颠倒第二个轴的值
 const scale_h_input = d3.scaleLinear([0, domain_h_max], [0, res_h-1]);
-//默认值
+// 输入值 的 默认值
 d3.select("#input_l").property("value", 0.5*domain_l_max);
 d3.select("#input_c").property("value", 0.5*domain_c_max);
 d3.select("#input_h").property("value", 0.5*domain_h_max);
 
-// 色彩溢出部分的透明度 [0, 255]
+// 色彩 溢出sRGB部分 的 透明度 [0, 255]
 let displayable_color_alpha = 85;
 
 //=====================================  =====================================//

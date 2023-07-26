@@ -46,18 +46,21 @@ d3.select("#input_l").property("value", 0.5*domain_l_max);
 d3.select("#input_c").property("value", 0.5*domain_c_max);
 d3.select("#input_h").property("value", 0.5*domain_h_max);
 
-// 色彩 溢出sRGB部分 的 透明度 [0, 255]
+// 绘图 溢出sRGB部分 的 透明度 [0, 255]
 let displayable_color_alpha = 85;
 
 //=====================================  =====================================//
 //                                  操作前置                                  //
 //=====================================  =====================================//
+
+// 色相 - 色度
 var canvas_hc = document.getElementById("canvas_hc");       // 获取画面元素
 canvas_hc.width  = res_h;                                   // 图形尺寸
 canvas_hc.height = res_c;
 var ctx_hc = canvas_hc.getContext("2d");
 var image_hc = ctx_hc.createImageData(canvas_hc.width, canvas_hc.height);
 
+// 色相 - 色度 
 var canvas_hc_cex = document.getElementById("canvas_hc_cex");
 canvas_hc_cex.width  = res_h;
 canvas_hc_cex.height = res_c;

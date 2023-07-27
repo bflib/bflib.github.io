@@ -53,32 +53,37 @@ let displayable_color_alpha = 85;
 //                                  操作前置                                  //
 //=====================================  =====================================//
 
-// 色相 - 色度
+// 等明度面 (色相|色度)
 var canvas_hc = document.getElementById("canvas_hc");       // 获取画面元素
 canvas_hc.width  = res_h;                                   // 图形尺寸
 canvas_hc.height = res_c;
 var ctx_hc = canvas_hc.getContext("2d");
 var image_hc = ctx_hc.createImageData(canvas_hc.width, canvas_hc.height);
 
-// 色相 - 色度 
+// 等明度面 (色相|色度) [不符时取最大近似值] 俯视(top_view)
 var canvas_hc_cex = document.getElementById("canvas_hc_cex");
 canvas_hc_cex.width  = res_h;
 canvas_hc_cex.height = res_c;
 var ctx_hc_cex = canvas_hc_cex.getContext("2d");
 var image_hc_cex = ctx_hc_cex.createImageData(canvas_hc_cex.width, canvas_hc_cex.height);
 
+// 等明度面 (色相|色度) [不符时取最小近似值] 仰视(button_bottom)
+
+// 等色度面 (色相|明度)
 var canvas_hl = document.getElementById("canvas_hl");
 canvas_hl.width  = res_h;
 canvas_hl.height = res_l;
 var ctx_hl = canvas_hl.getContext("2d");
 var image_hl = ctx_hl.createImageData(canvas_hl.width, canvas_hl.height);
 
+// 等色度面 (色相|明度)
 var canvas_hl_cex = document.getElementById("canvas_hl_cex");
 canvas_hl_cex.width  = res_h;
 canvas_hl_cex.height = res_l;
 var ctx_hl_cex = canvas_hl_cex.getContext("2d");
 var image_hl_cex = ctx_hl_cex.createImageData(canvas_hl_cex.width, canvas_hl_cex.height);
 
+// 等色相面 (明度|色度)
 var canvas_lc = document.getElementById("canvas_lc");
 canvas_lc.width  = res_l;
 canvas_lc.height = res_c;

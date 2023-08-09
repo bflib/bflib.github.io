@@ -9,8 +9,8 @@
     <canvas id="canvas_hc"></canvas>
     <canvas id="canvas_hl"></canvas>
     <canvas id="canvas_lc"></canvas>
-    <canvas id="canvas_hc_cex"></canvas>
-    <canvas id="canvas_hl_cex"></canvas>
+    <canvas id="canvas_hc_top_view"></canvas>
+    <canvas id="canvas_hl_top_view"></canvas>
     <hr />
     L: <input id="input_l" type="number" step="1" /><br />
     C: <input id="input_c" type="number" step="1" /><br />
@@ -61,13 +61,13 @@ var ctx_hc = canvas_hc.getContext("2d");
 var image_hc = ctx_hc.createImageData(canvas_hc.width, canvas_hc.height);
 
 // 等明度面 (色相|色度) [不符时取最大近似值] 俯视(top_view)
-var canvas_hc_cex = document.getElementById("canvas_hc_cex");
-canvas_hc_cex.width  = res_h;
-canvas_hc_cex.height = res_c;
-var ctx_hc_cex = canvas_hc_cex.getContext("2d");
-var image_hc_cex = ctx_hc_cex.createImageData(canvas_hc_cex.width, canvas_hc_cex.height);
+var canvas_hc_top_view = document.getElementById("canvas_hc_top_view");
+canvas_hc_top_view.width  = res_h;
+canvas_hc_top_view.height = res_c;
+var ctx_hc_top_view = canvas_hc_top_view.getContext("2d");
+var image_hc_top_view = ctx_hc_top_view.createImageData(canvas_hc_top_view.width, canvas_hc_top_view.height);
 
-// 等明度面 (色相|色度) [不符时取最小近似值] 仰视(button_bottom)
+// 等明度面 (色相|色度) [不符时取最小近似值] 仰视(bottom_view)
 
 // 等色度面 (色相|明度)
 var canvas_hl = document.getElementById("canvas_hl");
@@ -77,11 +77,11 @@ var ctx_hl = canvas_hl.getContext("2d");
 var image_hl = ctx_hl.createImageData(canvas_hl.width, canvas_hl.height);
 
 // 等色度面 (色相|明度)
-var canvas_hl_cex = document.getElementById("canvas_hl_cex");
-canvas_hl_cex.width  = res_h;
-canvas_hl_cex.height = res_l;
-var ctx_hl_cex = canvas_hl_cex.getContext("2d");
-var image_hl_cex = ctx_hl_cex.createImageData(canvas_hl_cex.width, canvas_hl_cex.height);
+var canvas_hl_top_view = document.getElementById("canvas_hl_top_view");
+canvas_hl_top_view.width  = res_h;
+canvas_hl_top_view.height = res_l;
+var ctx_hl_top_view = canvas_hl_top_view.getContext("2d");
+var image_hl_top_view = ctx_hl_top_view.createImageData(canvas_hl_top_view.width, canvas_hl_top_view.height);
 
 // 等色相面 (明度|色度)
 var canvas_lc = document.getElementById("canvas_lc");
@@ -139,29 +139,29 @@ draw_hc(parseInt(input_l.value));           // 初始化
 
 // 等亮度面截面(俯视) ——  hc平面
 
-let colorspace_hc_cex = colorspace_hc;
-function draw_hc_cex(l) {
+let colorspace_hc_top_view = colorspace_hc;
+function draw_hc_top_view(l) {
     l = parseInt(scale_l_input(l));
     if (l>0) { l = l-1; };  // 第一张图直接使用draw_hc(l)刚取得的图像
     for (let c = 0; c < res_c; c++) {               // y 轴
     for (let h = 0; h < res_h; h++) {               // x 轴
-        draw_hc_cex_recur(l, c, h);                 // 递归函数
+        draw_hc_top_view_recur(l, c, h);                 // 递归函数
     }}
-    image_hc_cex.data.set(colorspace_hc_cex);       // 数组 -> 图像数据
-    ctx_hc_cex.putImageData(image_hc_cex, 0, 0);    // 绘图
+    image_hc_top_view.data.set(colorspace_hc_top_view);       // 数组 -> 图像数据
+    ctx_hc_top_view.putImageData(image_hc_top_view, 0, 0);    // 绘图
 }
 
-function draw_hc_cex_recur(l, c, h) {
+function draw_hc_top_view_recur(l, c, h) {
     let index = (h + c*res_h + l*res_h*res_c) * 4;  // 坐标
     if (colorspace_lch[index + 3] == 255) {
         for (let i = 0; i < 4; i++) {               // rgba通道
-            colorspace_hc_cex[i + h*4 + c*res_h*4] = colorspace_lch[index + i];
+            colorspace_hc_top_view[i + h*4 + c*res_h*4] = colorspace_lch[index + i];
         }
     } else {
-        if (l > 0) { draw_hc_cex_recur(l-1, c, h); }
+        if (l > 0) { draw_hc_top_view_recur(l-1, c, h); }
     }
 }
-draw_hc_cex(parseInt(input_l.value));           // 初始化
+draw_hc_top_view(parseInt(input_l.value));           // 初始化
 
 
 // 等色度面 ——  hl平面
@@ -185,29 +185,29 @@ draw_hl(parseInt(input_c.value));
 
 // 等色度面截面(俯视) ——  hl平面
 
-// let colorspace_hl_cex = new Uint8ClampedArray(res_h*res_l*4);
-let colorspace_hl_cex = colorspace_hl;
-function draw_hl_cex(c) {
+// let colorspace_hl_top_view = new Uint8ClampedArray(res_h*res_l*4);
+let colorspace_hl_top_view = colorspace_hl;
+function draw_hl_top_view(c) {
     c = parseInt(scale_c_input(c));
     if (c>0) { c = c-1; };  // 第一张图直接使用draw_hc(l)刚取得的图像
     for (let l = 0; l < res_l; l++) {
     for (let h = 0; h < res_h; h++) {
-        draw_hl_cex_recur(l, c, h);
+        draw_hl_top_view_recur(l, c, h);
     }}
-    image_hl_cex.data.set(colorspace_hl_cex);
-    ctx_hl_cex.putImageData(image_hl_cex, 0, 0);
+    image_hl_top_view.data.set(colorspace_hl_top_view);
+    ctx_hl_top_view.putImageData(image_hl_top_view, 0, 0);
 }
-function draw_hl_cex_recur(l, c, h) {
+function draw_hl_top_view_recur(l, c, h) {
     let index = (h + (res_c-1-c)*res_h + (res_l-1-l)*res_h*res_c) * 4;
     if (colorspace_lch[index + 3] == 255) {
         for (let i = 0; i < 4; i++) {
-            colorspace_hl_cex[i + h*4 + l*res_h*4] = colorspace_lch[index + i];
+            colorspace_hl_top_view[i + h*4 + l*res_h*4] = colorspace_lch[index + i];
         }
     } else {
-        if (c > 0) { draw_hl_cex_recur(l, c-1, h); }
+        if (c > 0) { draw_hl_top_view_recur(l, c-1, h); }
     }
 }
-draw_hl_cex(parseInt(input_c.value));
+draw_hl_top_view(parseInt(input_c.value));
 
 // 等色相面 ——  lc平面
 
@@ -231,7 +231,7 @@ draw_lc(parseInt(input_h.value));
 input_l.addEventListener('change', function() {
     const value = parseInt(this.value);
     draw_hc(value);
-    draw_hc_cex(value);
+    draw_hc_top_view(value);
     }
 );
 
@@ -247,7 +247,7 @@ input_l.addEventListener('change', function() {
 input_c.addEventListener('change', function() {
     const value = parseInt(this.value);
     draw_hl(value);
-    draw_hl_cex(value);
+    draw_hl_top_view(value);
     }
 );
 input_h.addEventListener('change', function() {

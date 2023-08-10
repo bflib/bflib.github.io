@@ -2,14 +2,22 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="..\img\favicon\tea.ico" />
+    <title>COLOR PICKER</title>
+    <!-- Version 0.4 (2023-8-10) -->
     <script src="..\js\d3.min.js"></script>
     <script src="..\js\color_conversion.js"></script>
 </head>
 <body>
+    <!-- 等明度面 (色相|色度) -->
     <canvas id="canvas_hc"></canvas>
+    <!-- 等色度面 (色相|明度) -->
     <canvas id="canvas_hl"></canvas>
+    <!-- 等色相面 (明度|色度) -->
     <canvas id="canvas_lc"></canvas>
+    <!-- 等明度面 (色相|色度) [无可取值时取最大值] 俯视(top_view) -->
     <canvas id="canvas_hc_top_view"></canvas>
+    <!-- 等色度面 (色相|明度) [无可取值时取最大值] 俯视(top_view) -->
     <canvas id="canvas_hl_top_view"></canvas>
     <hr />
     L: <input id="input_l" type="number" step="1" /><br />
@@ -19,6 +27,8 @@
 </body>
 
 <script>
+
+//-------------------------------------  -------------------------------------//
 
 // <input id="input_l" type="number" />要求有以下功能, Banker's Rounding
 
@@ -39,9 +49,9 @@ const domain_h_max = 360;
 
 // 输入值 --映射到-> 绘图坐标
 const scale_l_input = d3.scaleLinear([0, domain_l_max], [0, res_l-1]);
-const scale_c_input = d3.scaleLinear([0, domain_c_max], [0, res_c-1]); // * 需要颠倒第二个轴的值
+const scale_c_input = d3.scaleLinear([0, domain_c_max], [0, res_c-1]);
 const scale_h_input = d3.scaleLinear([0, domain_h_max], [0, res_h-1]);
-// 输入值 的 默认值
+// 输入值 的 默认值(初始化值)
 d3.select("#input_l").property("value", 0.5*domain_l_max);
 d3.select("#input_c").property("value", 0.5*domain_c_max);
 d3.select("#input_h").property("value", 0.5*domain_h_max);
@@ -76,7 +86,7 @@ canvas_hl.height = res_l;
 var ctx_hl = canvas_hl.getContext("2d");
 var image_hl = ctx_hl.createImageData(canvas_hl.width, canvas_hl.height);
 
-// 等色度面 (色相|明度)
+// 等色度面 (色相|明度) [无可取值时取最大值] 俯视(top_view)
 var canvas_hl_top_view = document.getElementById("canvas_hl_top_view");
 canvas_hl_top_view.width  = res_h;
 canvas_hl_top_view.height = res_l;
@@ -96,13 +106,15 @@ let input_c = document.getElementById('input_c');
 let input_h = document.getElementById('input_h');
 
 //=====================================  =====================================//
-//                              预先计算色彩空间                              //
+//                               色彩空间预计算                               //
 //=====================================  =====================================//
 
-// lch 色彩空间 数组 ( 横坐标 为 h, 纵坐标 为 c, 深度 为 l )
+// lch 色彩空间 数组 ( 横坐标 h, 纵坐标 c, 深度 l, R G B α )
 let colorspace_lch = new Uint8ClampedArray(res_h * res_c * res_l * 4);
-let scale_h = d3.scaleLinear([0, res_h], [0, 2*Math.PI]);
-let scale_c = d3.scaleLinear([0, res_c], [ab_max, 0]);
+let scale_h = d3.scaleLinear([0, res_h], [0, 2*Math.PI]);   // 线性映射比例尺: 绘图坐标h -> 2π
+let scale_c = d3.scaleLinear([0, res_c], [0, ab_max]);      // 线性映射比例尺: 绘图坐标c -> 最大色度
+// scale_l(l) = l/res_l
+
 // lch 色彩空间 向 sRGB映射
 {
 for (let l = 0; l < res_l; l++) {
@@ -116,65 +128,62 @@ for (let h = 0; h < res_h; h++) {
     colorspace_lch[index + 3] = d3rgb(color).displayable() ? 255 : displayable_color_alpha; // 不透明度
 }}}
 }
+
 //=====================================  =====================================//
 //                               读取数据并绘图                               //
 //=====================================  =====================================//
 
-// 等亮度面  ——  hc平面 
+// 等亮度面 —— hc平面 ---------------  -------------------------------------//
 
 let colorspace_hc = new Uint8ClampedArray(res_h*res_c*4);
 function draw_hc(l) {
     l = parseInt(scale_l_input(l));
-    for (let c = 0; c < res_c; c++) {                   // y 轴
-    for (let h = 0; h < res_h; h++) {                   // x 轴
-        let index = (h + c*res_h + l*res_h*res_c) * 4;  // 坐标
-        for (let i = 0; i < 4; i++) {                   // rgba通道
-        colorspace_hc[i + h*4 + c*res_h*4] = colorspace_lch[index + i];
+    for (let c = 0; c < res_c; c++) {                               // y 轴
+    for (let h = 0; h < res_h; h++) {                               // x 轴
+        let index = (h + (res_c-1-c)*res_h + l*res_h*res_c) * 4;    // 坐标 (颠倒纵坐标)
+        for (let i = 0; i < 4; i++) {                               // rgba通道
+        colorspace_hc[i + h*4 + c*res_h*4] = colorspace_lch[index + i]; // 色彩空间截面数组
     }}}
-    image_hc.data.set(colorspace_hc);       // 数组 -> 图像数据
-    ctx_hc.putImageData(image_hc, 0, 0);    // 绘图
+    image_hc.data.set(colorspace_hc);                               // 数组 -> 图像数据
+    ctx_hc.putImageData(image_hc, 0, 0);                            // 绘图
 }
-draw_hc(parseInt(input_l.value));           // 初始化
+draw_hc(parseInt(input_l.value));                                   // 初始化
 
-
-// 等亮度面截面(俯视) ——  hc平面
+// 等亮度面截面(俯视) —— hc平面 -----  -------------------------------------//
 
 let colorspace_hc_top_view = colorspace_hc;
 function draw_hc_top_view(l) {
     l = parseInt(scale_l_input(l));
     if (l>0) { l = l-1; };  // 第一张图直接使用draw_hc(l)刚取得的图像
-    for (let c = 0; c < res_c; c++) {               // y 轴
-    for (let h = 0; h < res_h; h++) {               // x 轴
-        draw_hc_top_view_recur(l, c, h);                 // 递归函数
+    for (let c = 0; c < res_c; c++) {                           // y 轴
+    for (let h = 0; h < res_h; h++) {                           // x 轴
+        draw_hc_top_view_recur(l, c, h);                        // 递归函数
     }}
-    image_hc_top_view.data.set(colorspace_hc_top_view);       // 数组 -> 图像数据
-    ctx_hc_top_view.putImageData(image_hc_top_view, 0, 0);    // 绘图
+    image_hc_top_view.data.set(colorspace_hc_top_view);         // 数组 -> 图像数据
+    ctx_hc_top_view.putImageData(image_hc_top_view, 0, 0);      // 绘图
 }
 
 function draw_hc_top_view_recur(l, c, h) {
-    let index = (h + c*res_h + l*res_h*res_c) * 4;  // 坐标
+    let index = (h + (res_c-1-c)*res_h + l*res_h*res_c) * 4;    // 坐标 (颠倒纵坐标)
     if (colorspace_lch[index + 3] == 255) {
-        for (let i = 0; i < 4; i++) {               // rgba通道
+        for (let i = 0; i < 4; i++) {                           // rgba通道
             colorspace_hc_top_view[i + h*4 + c*res_h*4] = colorspace_lch[index + i];
         }
     } else {
         if (l > 0) { draw_hc_top_view_recur(l-1, c, h); }
     }
 }
-draw_hc_top_view(parseInt(input_l.value));           // 初始化
+draw_hc_top_view(parseInt(input_l.value));                      // 初始化
 
-
-// 等色度面 ——  hl平面
+// 等色度面 —— hl平面 ---------------  -------------------------------------//
 
 let colorspace_hl = new Uint8ClampedArray(res_h*res_l*4);
 function draw_hl(c) {
     c = parseInt(scale_c_input(c));
     for (let l = 0; l < res_l; l++) {
     for (let h = 0; h < res_h; h++) {
-        //【注意】 (res_?-1-?) 颠倒坐标轴
-        let index = (h + (res_c-1-c)*res_h + (res_l-1-l)*res_h*res_c) * 4;
+        let index = (h + c*res_h + (res_l-1-l)*res_h*res_c) * 4;// 坐标 (颠倒纵坐标)
         for (let i = 0; i < 4; i++) {
-        // 颠倒坐标轴的方法 用在此处也可以
         colorspace_hl[i + h*4 + l*res_h*4] = colorspace_lch[index + i];
     }}}
     image_hl.data.set(colorspace_hl);
@@ -183,7 +192,7 @@ function draw_hl(c) {
 draw_hl(parseInt(input_c.value));
 
 
-// 等色度面截面(俯视) ——  hl平面
+// 等色度面截面(俯视) —— hl平面 -----  -------------------------------------//
 
 // let colorspace_hl_top_view = new Uint8ClampedArray(res_h*res_l*4);
 let colorspace_hl_top_view = colorspace_hl;
@@ -198,7 +207,7 @@ function draw_hl_top_view(c) {
     ctx_hl_top_view.putImageData(image_hl_top_view, 0, 0);
 }
 function draw_hl_top_view_recur(l, c, h) {
-    let index = (h + (res_c-1-c)*res_h + (res_l-1-l)*res_h*res_c) * 4;
+    let index = (h + c*res_h + (res_l-1-l)*res_h*res_c) * 4;    // 坐标 (颠倒纵坐标)
     if (colorspace_lch[index + 3] == 255) {
         for (let i = 0; i < 4; i++) {
             colorspace_hl_top_view[i + h*4 + l*res_h*4] = colorspace_lch[index + i];
@@ -209,14 +218,14 @@ function draw_hl_top_view_recur(l, c, h) {
 }
 draw_hl_top_view(parseInt(input_c.value));
 
-// 等色相面 ——  lc平面
+// 等色相面 —— lc平面 ---------------  -------------------------------------//
 
 let colorspace_lc = new Uint8ClampedArray(res_h*res_c*4);
 function draw_lc(h) {
     h = parseInt(scale_h_input(h));
     for (let c = 0; c < res_c; c++) {
     for (let l = 0; l < res_l; l++) {
-        let index = (h + c*res_h + l*res_h*res_c) * 4;
+        let index = (h + (res_c-1-c)*res_h + l*res_h*res_c) * 4;// 坐标 (颠倒纵坐标)
         for (let i = 0; i < 4; i++) {
         colorspace_lc[i + l*4 + c*res_h*4] = colorspace_lch[index + i];
     }}}

@@ -158,8 +158,9 @@ function draw_hc(l) {
     for (let h = 0; h < res_h; h++) {                               // x 轴
         let index = (h + (res_c-1-c)*res_h + l*res_h*res_c) * 4;    // 坐标 (颠倒纵坐标)
         for (let i = 0; i < 4; i++) {                               // rgba通道
-        colorspace_hc[i + h*4 + c*res_h*4] = colorspace_lch[index + i]; // 色彩空间截面数组
-    }}}
+            colorspace_hc[i + h*4 + c*res_h*4] = colorspace_lch[index + i]; // 色彩空间截面数组
+        }
+    }}
     image_hc.data.set(colorspace_hc);                               // 数组 -> 图像数据
     ctx_hc.putImageData(image_hc, 0, 0);                            // 绘图
 }
@@ -167,36 +168,55 @@ draw_hc(parseInt(input_l.value));                                   // 初始化
 
 // 等亮度面截面(俯视) —— hc平面 -----  -------------------------------------//
 
-let colorspace_hc_top_view = colorspace_hc;
+let colorspace_hc_top_view = colorspace_hc; // 在draw_hc(l)取得的图像上填补空缺
 function draw_hc_top_view(l) {
     l = parseInt(scale_l_input(l));
-    if (l>0) { l = l-1; };  // 第一张图直接使用draw_hc(l)刚取得的图像
-    for (let c = 0; c < res_c; c++) {                           // y 轴
-    for (let h = 0; h < res_h; h++) {                           // x 轴
-        draw_hc_top_view_recur(l, c, h);                        // 递归(recur)
+    if (l > 0) { l = l-1; };                // 跳过已有图像的重复运算
+    for (let c = 0; c < res_c; c++) {                               // y 轴
+    for (let h = 0; h < res_h; h++) {                               // x 轴
+        draw_hc_top_view_recur(l, c, h);                            // 递归(recur)
     }}
-    image_hc_top_view.data.set(colorspace_hc_top_view);         // 数组 -> 图像数据
-    ctx_hc_top_view.putImageData(image_hc_top_view, 0, 0);      // 绘图
+    image_hc_top_view.data.set(colorspace_hc_top_view);             // 数组 -> 图像数据
+    ctx_hc_top_view.putImageData(image_hc_top_view, 0, 0);          // 绘图
 }
 
 function draw_hc_top_view_recur(l, c, h) {
-    let index = (h + (res_c-1-c)*res_h + l*res_h*res_c) * 4;    // 坐标 (颠倒纵坐标)
-    if (colorspace_lch[index + 3] == 255) {
-        for (let i = 0; i < 4; i++) {                           // rgba通道
-            colorspace_hc_top_view[i + h*4 + c*res_h*4] = colorspace_lch[index + i];
+    let index = (h + (res_c-1-c)*res_h + l*res_h*res_c) * 4;        // 坐标 (颠倒纵坐标)
+    if (colorspace_lch[index + 3] == 255) {                         // 寻找空缺
+        for (let i = 0; i < 4; i++) {                               // rgba通道
+            colorspace_hc_top_view[i + h*4 + c*res_h*4] = colorspace_lch[index + i]; // 色彩空间数组
         }
     } else {
-        if (l > 0) { draw_hc_top_view_recur(l-1, c, h); }
+        if (l > 0) { draw_hc_top_view_recur(l-1, c, h); }           // 递归到l=0
     }
 }
-draw_hc_top_view(parseInt(input_l.value));                      // 初始化
+draw_hc_top_view(parseInt(input_l.value));                          // 初始化
 
 // 等亮度面截面(仰视) —— hc平面 -----  -------------------------------------//
 
-let colorspace_hc_bottom_view = colorspace_hc;
+let colorspace_hc_bottom_view = colorspace_hc; // 在draw_hc(l)取得的图像上填补空缺
 function draw_hc_bottom_view(l) {
-    
+    l = parseInt(scale_l_input(l));
+    if (l < res_l-1) { l = l+1; };             // 跳过已有图像的重复运算
+    for (let c = 0; c < res_c; c++) {                               // y 轴
+    for (let h = 0; h < res_h; h++) {                               // x 轴
+        draw_hc_bottom_view_recur(l, c, h);                         // 递归(recur)
+    }}
+    image_hc_bottom_view.data.set(colorspace_hc_bottom_view);       // 数组 -> 图像数据
+    ctx_hc_bottom_view.putImageData(image_hc_bottom_view, 0, 0);    // 绘图
 }
+
+function draw_hc_bottom_view_recur(l, c, h) {
+    let index = (h + (res_c-1-c)*res_h + l*res_h*res_c) * 4;        // 坐标 (颠倒纵坐标)
+    if (colorspace_lch[index + 3] == 255) {                         // 寻找空缺
+        for (let i = 0; i < 4; i++) {                               // rgba通道
+            colorspace_hc_bottom_view[i + h*4 + c*res_h*4] = colorspace_lch[index + i]; // 色彩空间数组
+        }
+    } else {
+        if (l < res_l-1) { draw_hc_bottom_view_recur(l+1, c, h); }  // 递归到l=res_l-1
+    }
+}
+draw_hc_bottom_view(parseInt(input_l.value));                       // 初始化
 
 
 // 等色度面 —— hl平面 ---------------  -------------------------------------//
@@ -265,6 +285,7 @@ input_l.addEventListener('change', function() {
     const value = parseInt(this.value);
     draw_hc(value);
     draw_hc_top_view(value);
+    draw_hc_bottom_view(value);
     }
 );
 

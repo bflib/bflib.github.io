@@ -54,20 +54,20 @@ let displayable_color_alpha = 85;
 //=====================================  =====================================//
 
 // 等明度面 (色相|色度)
-var canvas_hc = document.getElementById("canvas_hc");       // 获取画面元素
-canvas_hc.width  = res_h;                                   // 图形尺寸
+var canvas_hc = document.getElementById("canvas_hc");   // 获取文档的元素: id="canvas_hc"
+canvas_hc.width  = res_h;                               // 对获取的canvas元素 设定图形尺寸
 canvas_hc.height = res_c;
-var ctx_hc = canvas_hc.getContext("2d");
-var image_hc = ctx_hc.createImageData(canvas_hc.width, canvas_hc.height);
+var ctx_hc = canvas_hc.getContext("2d");                // 获取canvas的绘图环境: 2D绘图
+var image_hc = ctx_hc.createImageData(canvas_hc.width, canvas_hc.height); // 获取绘图环境的图像数据: 尺寸已在上面设定
 
-// 等明度面 (色相|色度) [不符时取最大近似值] 俯视(top_view)
+// 等明度面 (色相|色度) [无可取值时取最大值] 俯视(top_view)
 var canvas_hc_top_view = document.getElementById("canvas_hc_top_view");
 canvas_hc_top_view.width  = res_h;
 canvas_hc_top_view.height = res_c;
 var ctx_hc_top_view = canvas_hc_top_view.getContext("2d");
 var image_hc_top_view = ctx_hc_top_view.createImageData(canvas_hc_top_view.width, canvas_hc_top_view.height);
 
-// 等明度面 (色相|色度) [不符时取最小近似值] 仰视(bottom_view)
+// 等明度面 (色相|色度) [无可取值时取最小值] 仰视(bottom_view)
 
 // 等色度面 (色相|明度)
 var canvas_hl = document.getElementById("canvas_hl");

@@ -15,15 +15,26 @@
     <canvas id="canvas_hl"></canvas>
     <!-- 等色相面 (明度|色度) -->
     <canvas id="canvas_lc"></canvas>
+    <br />
     <!-- 等明度面 (色相|色度) [无可取值时取最大值] 俯视(top_view) -->
     <canvas id="canvas_hc_top_view"></canvas>
     <!-- 等色度面 (色相|明度) [无可取值时取最大值] 俯视(top_view) -->
     <canvas id="canvas_hl_top_view"></canvas>
+    <br />
+    <!-- 等明度面 (色相|色度) [无可取值时取最小值] 仰视(bottom_view) -->
+    <canvas id="canvas_hc_bottom_view"></canvas>
     <hr />
     L: <input id="input_l" type="number" step="1" /><br />
     C: <input id="input_c" type="number" step="1" /><br />
     H: <input id="input_h" type="number" step="1" /><br />
 
+
+    <div style="position: relative;">
+    
+        <!-- colorvalue -->
+
+
+    </div>
 </body>
 
 <script>
@@ -78,6 +89,11 @@ var ctx_hc_top_view = canvas_hc_top_view.getContext("2d");
 var image_hc_top_view = ctx_hc_top_view.createImageData(canvas_hc_top_view.width, canvas_hc_top_view.height);
 
 // 等明度面 (色相|色度) [无可取值时取最小值] 仰视(bottom_view)
+var canvas_hc_bottom_view = document.getElementById("canvas_hc_bottom_view");
+canvas_hc_bottom_view.width  = res_h;
+canvas_hc_bottom_view.height = res_c;
+var ctx_hc_bottom_view = canvas_hc_bottom_view.getContext("2d");
+var image_hc_bottom_view = ctx_hc_bottom_view.createImageData(canvas_hc_bottom_view.width, canvas_hc_bottom_view.height);
 
 // 等色度面 (色相|明度)
 var canvas_hl = document.getElementById("canvas_hl");
@@ -157,7 +173,7 @@ function draw_hc_top_view(l) {
     if (l>0) { l = l-1; };  // 第一张图直接使用draw_hc(l)刚取得的图像
     for (let c = 0; c < res_c; c++) {                           // y 轴
     for (let h = 0; h < res_h; h++) {                           // x 轴
-        draw_hc_top_view_recur(l, c, h);                        // 递归函数
+        draw_hc_top_view_recur(l, c, h);                        // 递归(recur)
     }}
     image_hc_top_view.data.set(colorspace_hc_top_view);         // 数组 -> 图像数据
     ctx_hc_top_view.putImageData(image_hc_top_view, 0, 0);      // 绘图
@@ -174,6 +190,14 @@ function draw_hc_top_view_recur(l, c, h) {
     }
 }
 draw_hc_top_view(parseInt(input_l.value));                      // 初始化
+
+// 等亮度面截面(仰视) —— hc平面 -----  -------------------------------------//
+
+let colorspace_hc_bottom_view = colorspace_hc;
+function draw_hc_bottom_view(l) {
+    
+}
+
 
 // 等色度面 —— hl平面 ---------------  -------------------------------------//
 

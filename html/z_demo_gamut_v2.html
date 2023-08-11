@@ -79,7 +79,7 @@ var canvas_hc = document.getElementById("canvas_hc");   // 获取文档的元素
 canvas_hc.width  = res_h;                               // 对获取的canvas元素 设定图形尺寸
 canvas_hc.height = res_c;
 var ctx_hc = canvas_hc.getContext("2d");                // 获取canvas的绘图环境: 2D绘图
-var image_hc = ctx_hc.createImageData(canvas_hc.width, canvas_hc.height); // 获取绘图环境的图像数据: 尺寸已在上面设定
+var image_hc = ctx_hc.createImageData(canvas_hc.width, canvas_hc.height); // 图像数据: 创建空图像数据, 定义尺寸
 
 // 等明度面 (色相|色度) [无可取值时取最大值] 俯视(top_view)
 var canvas_hc_top_view = document.getElementById("canvas_hc_top_view");
@@ -168,10 +168,11 @@ draw_hc(parseInt(input_l.value));                                   // 初始化
 
 // 等亮度面截面(俯视) —— hc平面 -----  -------------------------------------//
 
-let colorspace_hc_top_view = colorspace_hc; // 在draw_hc(l)取得的图像上填补空缺
+let colorspace_hc_top_view = new Uint8ClampedArray(res_h*res_c*4);
 function draw_hc_top_view(l) {
+    colorspace_hc_top_view.set(colorspace_hc);  // 在draw_hc(l)图像的基础上填补空缺
     l = parseInt(scale_l_input(l));
-    if (l > 0) { l = l-1; };                // 跳过已有图像的重复运算
+    if (l > 0) { l = l-1; };                    // 跳过已有图像的重复运算
     for (let c = 0; c < res_c; c++) {                               // y 轴
     for (let h = 0; h < res_h; h++) {                               // x 轴
         draw_hc_top_view_recur(l, c, h);                            // 递归(recur)
@@ -194,10 +195,11 @@ draw_hc_top_view(parseInt(input_l.value));                          // 初始化
 
 // 等亮度面截面(仰视) —— hc平面 -----  -------------------------------------//
 
-let colorspace_hc_bottom_view = colorspace_hc; // 在draw_hc(l)取得的图像上填补空缺
+let colorspace_hc_bottom_view = new Uint8ClampedArray(res_h*res_c*4);
 function draw_hc_bottom_view(l) {
+    colorspace_hc_bottom_view.set(colorspace_hc);   // 在draw_hc(l)图像的基础上填补空缺
     l = parseInt(scale_l_input(l));
-    if (l < res_l-1) { l = l+1; };             // 跳过已有图像的重复运算
+    if (l < res_l-1) { l = l+1; };                  // 跳过已有图像的重复运算
     for (let c = 0; c < res_c; c++) {                               // y 轴
     for (let h = 0; h < res_h; h++) {                               // x 轴
         draw_hc_bottom_view_recur(l, c, h);                         // 递归(recur)
@@ -238,7 +240,6 @@ draw_hl(parseInt(input_c.value));
 
 // 等色度面截面(俯视) —— hl平面 -----  -------------------------------------//
 
-// let colorspace_hl_top_view = new Uint8ClampedArray(res_h*res_l*4);
 let colorspace_hl_top_view = colorspace_hl;
 function draw_hl_top_view(c) {
     c = parseInt(scale_c_input(c));
